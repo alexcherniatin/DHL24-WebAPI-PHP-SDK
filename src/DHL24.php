@@ -7,6 +7,7 @@ use Alexcherniatin\DHL\Exceptions\DHL24Exception;
 use Alexcherniatin\DHL\Exceptions\SoapException;
 use Alexcherniatin\DHL\Structures\Address;
 use Alexcherniatin\DHL\Structures\AuthData;
+use Alexcherniatin\DHL\Structures\GetPieceIdResponse;
 use Alexcherniatin\DHL\Structures\ItemToPrintResponse;
 use Alexcherniatin\DHL\Structures\ShipmentBasic;
 
@@ -37,7 +38,7 @@ class DHL24
     {
         $this->client = new Client($sandbox);
 
-        if(!$this->client){
+        if (!$this->client) {
             throw new SoapException("Connection error");
         }
 
@@ -153,5 +154,39 @@ class DHL24
         }
 
         return (new ItemToPrintResponse())->fromResponse($result->getLabelsResult);
+    }
+
+    /**
+     * Using this method, it is possible to get the data of all packages of a given shipment.
+     *
+     * @param array $items Array of Item structures
+     *
+     * @throws SoapException
+     * @throws SoapFault
+     * @throws InvalidStructureException
+     * @throws DHL24Exception
+     *
+     * @return array
+     */
+    public function getPieceId(array $items): array
+    {
+        if ($items === 0) {
+            throw new DHL24Exception('Items require minimum 1 element');
+        }
+
+        $params = [
+            'authData' => $this->authData,
+            'request' => [
+                'items' => $items
+            ],
+        ];
+
+        $result = $this->client->getPieceId($params);
+
+        if (!isset($result->getPieceIdResult)) {
+            throw new SoapException('Invalid response structure');
+        }
+
+        return (new GetPieceIdResponse())->fromResponse($result->getPieceIdResult);
     }
 }

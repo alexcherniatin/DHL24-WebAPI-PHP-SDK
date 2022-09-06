@@ -79,11 +79,12 @@ $shipmentFullDataStructure = (new ShipmentFullData())
     ->setPieceList(
         [
             $pieceStructure,
+            $pieceStructure,
         ]
     )
     ->setPayment($paymentStructure)
     ->setService($serviceDefinitionStructure)
-    ->setShipmentDate(\date(ShipmentFullData::DATE_FORMAT, \strtotime("2021-03-18")))
+    ->setShipmentDate(\date(ShipmentFullData::DATE_FORMAT, \strtotime("2022-09-10")))
     ->setContent('Some content')
     ->setSkipRestrictionCheck(true)
     ->structure();
